@@ -45,6 +45,26 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Database connection test
+app.get('/db-test', async (req, res) => {
+  try {
+    const prisma = require('./config/database');
+    await prisma.$connect();
+    res.json({ 
+      status: 'Database connected successfully', 
+      timestamp: new Date().toISOString(),
+      databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Not set'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'Database connection failed', 
+      error: error.message,
+      timestamp: new Date().toISOString(),
+      databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Not set'
+    });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
