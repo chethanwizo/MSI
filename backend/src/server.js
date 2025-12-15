@@ -9,6 +9,7 @@ const uploadRoutes = require('./routes/upload');
 const dashboardRoutes = require('./routes/dashboard');
 const searchRoutes = require('./routes/search');
 const employeeRoutes = require('./routes/employee');
+const setupRoutes = require('./routes/setup');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -37,6 +38,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/employee', employeeRoutes);
+app.use('/api/setup', setupRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
