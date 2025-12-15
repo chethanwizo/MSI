@@ -1,0 +1,4 @@
+APPL_REF,FULL_NAME,CITY,PRODUCT,DECLINE_DESCRIPTION,DECLINE_CATEGORY,Activation Status,DECISIN_DT
+ARN001234570,Test Customer 1,Mumbai,Credit Card,,,ACTIVE,2024-01-20
+ARN001234571,Test Customer 2,Delhi,Credit Card,,,PENDING,
+ARN001234572,Test Customer 3,Bangalore,Credit Card,Insufficient Income,Financial,INACTIVE,2024-01-18

@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "seed": "node src/seed.js",
+    "setup": "npm run db:generate && npm run db:push && npm run seed"
+  }
+}

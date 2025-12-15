@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      String   @default("viewer") // admin, viewer
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Employee {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  createdAt    DateTime      @default(now()) @map("created_at")
+  applications Application[]
+
+  @@map("employees")
+}
+
+model Application {
+  id              Int      @id @default(autoincrement())
+  arn             String   @unique
+  employeeId      Int      @map("employee_id")
+  customerName    String   @map("customer_name")
+  mobileNo        String?  @map("mobile_no")
+  applicationDate DateTime @map("application_date")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  employee          Employee           @relation(fields: [employeeId], references: [id])
+  applicationStatus ApplicationStatus?
+
+  @@index([arn])
+  @@map("applications")
+}
+
+model MisRawData {
+  id         Int      @id @default(autoincrement())
+  arn        String
+  rawJson    Json     @map("raw_json")
+  uploadDate DateTime @default(now()) @map("upload_date")
+
+  @@map("mis_raw_data")
+}
+
+model DumpRawData {
+  id         Int      @id @default(autoincrement())
+  applRef    String   @map("appl_ref")
+  rawJson    Json     @map("raw_json")
+  uploadDate DateTime @default(now()) @map("upload_date")
+  isMapped   Boolean  @default(false) @map("is_mapped")
+  variant    String   @default("variant1") // variant1 or variant2
+  customerName String? @map("customer_name") // normalized customer name
+
+  @@map("dump_raw_data")
+}
+
+model ApplicationStatus {
+  id                Int       @id @default(autoincrement())
+  arn               String    @unique
+  bankStatus        String?   @map("bank_status")
+  declineDescription String?  @map("decline_description")
+  declineCategory   String?   @map("decline_category")
+  misDecCode        String?   @map("mis_dec_code")
+  decisionDate      DateTime? @map("decision_date")
+  activationStatus  String?   @map("activation_status")
+  approvedFlag      Boolean?  @map("approved_flag")
+  lastUpdated       DateTime  @default(now()) @updatedAt @map("last_updated")
+  
+  // Enhanced fields for dump variants
+  finalDecision     String?   @map("final_decision")
+  finalDecisionDate DateTime? @map("final_decision_date")
+  currentStage      String?   @map("current_stage")
+  kycStatus         String?   @map("kyc_status")
+  vkycStatus        String?   @map("vkyc_status")
+  vkycConsentDate   DateTime? @map("vkyc_consent_date")
+  declineCode       String?   @map("decline_code")
+  companyName       String?   @map("company_name")
+  productDescription String?  @map("product_description")
+  cardActivationStatus String? @map("card_activation_status")
+  cardType          String?   @map("card_type")
+
+  application Application @relation(fields: [arn], references: [arn])
+
+  @@map("application_status")
+}
+
+model UploadLog {
+  id          Int      @id @default(autoincrement())
+  fileType    String   @map("file_type") // MIS, DUMP
+  recordCount Int      @map("record_count")
+  fileName    String   @map("file_name")
+  uploadedBy  String   @map("uploaded_by")
+  uploadedAt  DateTime @default(now()) @map("uploaded_at")
+  status      String   @default("success") // success, failed, partial
+  errorLog    String?  @map("error_log")
+
+  @@map("upload_logs")
+}
