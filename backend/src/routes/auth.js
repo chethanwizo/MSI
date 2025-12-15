@@ -122,4 +122,31 @@ router.post('/logout', authenticateToken, (req, res) => {
   res.json({ message: 'Logged out successfully' });
 });
 
+// Database initialization endpoint (temporary for deployment)
+router.post('/init-db', async (req, res) => {
+  try {
+    console.log('🗄️ Initializing database...');
+    
+    // Run the seed function
+    const seed = require('../seed');
+    await seed();
+    
+    console.log('✅ Database initialized successfully!');
+    
+    res.json({
+      success: true,
+      message: 'Database initialized successfully',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('❌ Database initialization failed:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Database initialization failed',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 module.exports = router;
